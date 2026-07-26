@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BBC Live News</title>
+<title>Al Jazeera Live News</title>
 
 <style>
 
@@ -43,28 +43,33 @@ html,body{
 }
 
 
-/* BBC LOGO */
+/* AL JAZEERA LOGO */
 
 .logo{
 
-    width:120px;
+    width:170px;
     height:90px;
 
-    background:#bb1919;
+    background:#000;
 
-    color:#fff;
+    color:#d4af37;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:42px;
+    font-size:24px;
 
     font-weight:700;
+
+    letter-spacing:1px;
+
+    border-right:3px solid #d4af37;
 
     flex-shrink:0;
 
 }
+
 
 
 /* CLOCK */
@@ -88,6 +93,7 @@ html,body{
 }
 
 
+
 /* NEWS AREA */
 
 .news-box{
@@ -106,6 +112,9 @@ html,body{
 
 }
 
+
+
+/* HEADLINE */
 
 #headline{
 
@@ -128,9 +137,12 @@ html,body{
 }
 
 
+
+/* RIGHT TO LEFT ENTRY */
+
 .show{
 
-    animation:slideIn 1.8s ease forwards;
+    animation:slideIn 2.5s ease forwards;
 
 }
 
@@ -170,7 +182,7 @@ html,body{
 
 
 <div class="logo">
-BBC
+ALJAZEERA
 </div>
 
 
@@ -180,7 +192,7 @@ BBC
 <div class="news-box">
 
 <div id="headline">
-Loading BBC News...
+Loading Al Jazeera News...
 </div>
 
 </div>
@@ -276,7 +288,7 @@ async function loadNews(){
         console.log(error);
 
         document.getElementById("headline").textContent =
-        "BBC News unavailable";
+        "Al Jazeera News unavailable";
 
     }
 
@@ -329,6 +341,7 @@ function nextHeadline(){
     showHeadline();
 
 }
+
 
 
 
