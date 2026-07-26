@@ -25,7 +25,7 @@ jobs:
         import xml.etree.ElementTree as ET
         import json
 
-        url = "https://feeds.bbci.co.uk/news/rss.xml"
+        https://www.aljazeera.com/xml/rss/all.xml
 
         response = requests.get(url)
 
