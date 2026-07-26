@@ -33,7 +33,7 @@ body{
     color:#fff;
     font-size:26px;
     padding-left:100%;
-    animation:scroll 25s linear infinite;
+    animation:scroll 120s linear infinite;
 }
 
 @keyframes scroll{
