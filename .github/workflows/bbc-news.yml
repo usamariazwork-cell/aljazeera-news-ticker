@@ -1,4 +1,4 @@
-name: Update BBC News
+name: Update Al Jazeera News
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v4
 
 
-    - name: Download BBC RSS and create news.json
+    - name: Download Al Jazeera RSS and create news.json
       run: |
 
         python <<'PY'
@@ -25,20 +25,26 @@ jobs:
         import xml.etree.ElementTree as ET
         import json
 
-        https://www.aljazeera.com/xml/rss/all.xml
+
+        url = "https://www.aljazeera.com/xml/rss/all.xml"
+
 
         response = requests.get(url)
 
         root = ET.fromstring(response.text)
 
+
         news = []
+
 
         for item in root.findall(".//item")[:20]:
 
             title = item.find("title")
 
             if title is not None:
+
                 news.append(title.text)
+
 
 
         with open("news.json", "w", encoding="utf-8") as file:
@@ -50,7 +56,9 @@ jobs:
                 indent=2
             )
 
+
         PY
+
 
 
     - name: Commit updated news.json
@@ -62,6 +70,6 @@ jobs:
 
         git add news.json
 
-        git commit -m "Update BBC headlines" || exit 0
+        git commit -m "Update Al Jazeera headlines" || exit 0
 
         git push
