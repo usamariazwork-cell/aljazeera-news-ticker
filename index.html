@@ -8,89 +8,83 @@
 <style>
 
 body{
-margin:0;
-background:#000;
-font-family:Arial,Helvetica,sans-serif;
-overflow:hidden;
+    margin:0;
+    background:#000;
+    font-family:Arial,Helvetica,sans-serif;
+    overflow:hidden;
 }
 
 
 .container{
-height:90px;
-display:flex;
-align-items:center;
-background:#050505;
+    height:90px;
+    display:flex;
+    align-items:center;
+    background:#050505;
 }
 
 
 /* BBC LOGO */
 
 .logo{
-width:120px;
-height:90px;
-background:#e00000;
-color:white;
-font-size:42px;
-font-weight:bold;
-display:flex;
-align-items:center;
-justify-content:center;
+    width:120px;
+    height:90px;
+    background:#e00000;
+    color:white;
+    font-size:42px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 
-/* CLOCK */
+/* TIME */
 
 .time{
-width:200px;
-color:white;
-font-size:18px;
-font-weight:bold;
-text-align:center;
-line-height:25px;
+    width:200px;
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    line-height:25px;
 }
 
 
-/* NEWS AREA */
+/* TICKER */
 
 .ticker{
-flex:1;
-overflow:hidden;
-white-space:nowrap;
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
 }
 
 
 .news{
-
-display:inline-flex;
-align-items:center;
-
-animation:scroll 180s linear infinite;
-
+    display:inline-flex;
+    align-items:center;
+    animation:scroll 180s linear infinite;
 }
 
 
 .item{
-
-color:white;
-font-size:28px;
-font-weight:500;
-
-margin-right:180px;
-
+    color:white;
+    font-size:28px;
+    font-weight:500;
+    margin-right:180px;
 }
 
 
 
-/* SMOOTH SCROLL */
+/* SMOOTH MOVEMENT */
 
 @keyframes scroll{
 
 from{
-transform:translateX(100%);
+    transform:translateX(100%);
 }
 
 to{
-transform:translateX(-100%);
+    transform:translateX(-100%);
 }
 
 }
@@ -121,7 +115,11 @@ BBC
 <div class="ticker">
 
 <div class="news" id="news">
+
+<div class="item">
 Loading BBC News...
+</div>
+
 </div>
 
 </div>
@@ -138,9 +136,11 @@ Loading BBC News...
 
 function updateClock(){
 
-let now=new Date();
+let now = new Date();
+
 
 document.getElementById("clock").innerHTML =
+
 now.toLocaleDateString("en-GB")
 +
 "<br>"
@@ -158,21 +158,27 @@ updateClock();
 
 
 
-// BBC RSS NEWS
+// LOAD LOCAL NEWS.JSON
 
 async function loadNews(){
 
+
 try{
 
+
 let response = await fetch("news.json");
+
 
 let data = await response.json();
 
 
-let output="";
+
+let output = "";
 
 
-data.items.forEach(title=>{
+
+data.items.forEach(function(title){
+
 
 
 output += `
@@ -185,79 +191,15 @@ ${title}
 
 `;
 
+
+
 });
+
 
 
 document.getElementById("news").innerHTML = output;
 
 
-}
-
-catch(error){
-
-document.getElementById("news").innerHTML =
-"BBC News unavailable";
-
-}
-
-}
-
-
-let response = await fetch(url);
-
-
-let text = await response.text();
-
-
-
-let parser = new DOMParser();
-
-
-let xml =
-parser.parseFromString(text,"text/xml");
-
-
-
-let items =
-xml.querySelectorAll("item");
-
-
-
-let output="";
-
-
-
-items.forEach((item,index)=>{
-
-
-if(index < 20){
-
-
-let title =
-item.querySelector("title").textContent;
-
-
-
-output += `
-
-<div class="item">
-
-${title}
-
-</div>
-
-`;
-
-}
-
-
-});
-
-
-
-document.getElementById("news").innerHTML =
-output;
-
 
 }
 
@@ -265,7 +207,8 @@ catch(error){
 
 
 document.getElementById("news").innerHTML =
-"BBC News unavailable";
+
+"<div class='item'>BBC News unavailable</div>";
 
 
 }
@@ -278,7 +221,8 @@ document.getElementById("news").innerHTML =
 loadNews();
 
 
-// Update every 5 minutes
+
+// Refresh news every 5 minutes
 
 setInterval(loadNews,300000);
 
