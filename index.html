@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BBC Live News Ticker</title>
+<title>BBC Live News</title>
 
 <style>
 
@@ -24,16 +24,14 @@ html,body{
 
     overflow:hidden;
 
-    font-family:"Segoe UI","Roboto",Arial,sans-serif;
-
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    text-rendering:optimizeLegibility;
+    font-family:"Segoe UI",Arial,sans-serif;
 
 }
 
+
 .container{
 
+    width:100%;
     height:90px;
 
     display:flex;
@@ -43,6 +41,9 @@ html,body{
     background:#050505;
 
 }
+
+
+/* BBC LOGO */
 
 .logo{
 
@@ -58,21 +59,26 @@ html,body{
     justify-content:center;
 
     font-size:42px;
+
     font-weight:700;
 
     flex-shrink:0;
 
 }
 
+
+/* CLOCK */
+
 .time{
 
-    width:210px;
+    width:220px;
 
     color:#fff;
 
     text-align:center;
 
     font-size:18px;
+
     font-weight:700;
 
     line-height:24px;
@@ -81,13 +87,12 @@ html,body{
 
 }
 
-.ticker{
+
+/* NEWS AREA */
+
+.news-box{
 
     flex:1;
-
-    overflow:hidden;
-
-    position:relative;
 
     height:90px;
 
@@ -95,87 +100,83 @@ html,body{
 
     align-items:center;
 
-}
+    overflow:hidden;
 
-.news{
-
-    display:flex;
-
-    align-items:center;
-
-    white-space:nowrap;
-
-    animation:scroll 300s linear infinite;
-
-    transform:translate3d(0,0,0);
-
-    backface-visibility:hidden;
-
-    will-change:transform;
+    padding-left:30px;
 
 }
 
-.item{
+
+#headline{
 
     color:#fff;
 
-    font-size:32px;
+    font-size:30px;
 
     font-weight:700;
 
-    letter-spacing:.2px;
-
-    margin-right:220px;
-
     white-space:nowrap;
 
-}
+    opacity:1;
 
-@keyframes scroll{
+    transform:translate3d(0,0,0);
 
-    from{
+    transition:
 
-        transform:translate3d(0,0,0);
+    opacity .7s ease,
 
-    }
+    transform .7s ease;
 
-    to{
-
-        transform:translate3d(-100%,0,0);
-
-    }
+    will-change:transform,opacity;
 
 }
+
+
+.hide{
+
+    opacity:0 !important;
+
+    transform:translate3d(-80px,0,0) !important;
+
+}
+
 
 </style>
 
 </head>
 
+
 <body>
 
+
 <div class="container">
+
 
 <div class="logo">
 BBC
 </div>
 
+
 <div class="time" id="clock"></div>
 
-<div class="ticker">
 
-<div class="news" id="news">
+<div class="news-box">
 
-<div class="item">
+<div id="headline">
 Loading BBC News...
 </div>
 
 </div>
 
-</div>
 
 </div>
+
+
 
 <script>
+
+
+// CLOCK
 
 function updateClock(){
 
@@ -183,31 +184,32 @@ function updateClock(){
 
     document.getElementById("clock").innerHTML =
 
-        now.toLocaleDateString("en-GB",{
+    now.toLocaleDateString("en-GB",{
 
-            weekday:"short",
-            day:"2-digit",
-            month:"short",
-            year:"numeric"
+        weekday:"short",
+        day:"2-digit",
+        month:"short",
+        year:"numeric"
 
-        })
+    })
 
-        +
+    +
 
-        "<br>"
+    "<br>"
 
-        +
+    +
 
-        now.toLocaleTimeString("en-GB",{
+    now.toLocaleTimeString("en-GB",{
 
-            hour:"2-digit",
-            minute:"2-digit",
-            second:"2-digit",
-            hour12:false
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hour12:false
 
-        });
+    });
 
 }
+
 
 updateClock();
 
@@ -215,49 +217,118 @@ setInterval(updateClock,1000);
 
 
 
+// NEWS
+
+let headlines = [];
+
+let current = 0;
+
+
+
 async function loadNews(){
 
     try{
 
-        const response = await fetch("news.json?v="+Date.now());
+        const response = await fetch("news.json?v=" + Date.now());
+
 
         if(!response.ok){
 
-            throw new Error("Unable to load news");
+            throw new Error("news.json not found");
 
         }
 
+
         const data = await response.json();
 
-        let html="";
 
-        data.items.forEach(function(title){
+        headlines = data.items || [];
 
-            html += `<div class="item">${title}</div>`;
 
-        });
+        if(headlines.length > 0){
 
-        document.getElementById("news").innerHTML=html;
+            current = 0;
+
+            document.getElementById("headline").textContent = headlines[current];
+
+        }
+
 
     }
 
     catch(error){
 
-        console.error(error);
+        console.log(error);
 
-        document.getElementById("news").innerHTML=
-
-        "<div class='item'>BBC News unavailable</div>";
+        document.getElementById("headline").textContent =
+        "BBC News unavailable";
 
     }
 
 }
 
+
+
+
+function showNextHeadline(){
+
+    if(headlines.length === 0){
+
+        return;
+
+    }
+
+
+    const headline = document.getElementById("headline");
+
+
+    headline.classList.add("hide");
+
+
+
+    setTimeout(function(){
+
+
+        current++;
+
+
+        if(current >= headlines.length){
+
+            current = 0;
+
+        }
+
+
+        headline.textContent = headlines[current];
+
+
+        headline.classList.remove("hide");
+
+
+    },700);
+
+
+}
+
+
+
 loadNews();
+
+
+// Change headline every 5 seconds
+
+setInterval(showNextHeadline,5000);
+
+
+// Update news every 5 minutes
 
 setInterval(loadNews,300000);
 
+
+
 </script>
 
+
 </body>
+
 </html>
