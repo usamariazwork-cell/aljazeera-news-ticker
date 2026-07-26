@@ -1,23 +1,207 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBC Style News Ticker</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>BBC News Ticker</title>
+
+<style>
+
+body {
+    margin:0;
+    background:#000;
+    font-family:Arial, sans-serif;
+    overflow:hidden;
+}
+
+
+.container{
+    height:80px;
+    display:flex;
+    align-items:center;
+    background:#050505;
+}
+
+
+.logo{
+    width:120px;
+    height:80px;
+    background:#bb0000;
+    color:white;
+    font-size:42px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+.time{
+    color:white;
+    width:180px;
+    text-align:center;
+    font-size:18px;
+}
+
+
+.ticker{
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+
+.news{
+    display:inline-flex;
+    align-items:center;
+    animation:scroll 90s linear infinite;
+}
+
+
+.item{
+
+    color:white;
+    font-size:28px;
+    margin-right:80px;
+    display:flex;
+    align-items:center;
+
+}
+
+
+.item img{
+
+width:70px;
+height:45px;
+object-fit:cover;
+margin-right:15px;
+
+}
+
+
+@keyframes scroll{
+
+from{
+transform:translateX(100%);
+}
+
+to{
+transform:translateX(-100%);
+}
+
+}
+
+
+</style>
+
 </head>
+
+
 <body>
 
-<div class="ticker">
-    <div class="label">NEWS</div>
-    <div class="scroll">
-        <span id="news">
-            Loading latest headlines...
-        </span>
-    </div>
+
+<div class="container">
+
+
+<div class="logo">
+BBC
 </div>
 
-<script src="script.js"></script>
+
+<div class="time" id="clock"></div>
+
+
+<div class="ticker">
+
+<div class="news" id="news">
+Loading BBC News...
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+function clock(){
+
+let d=new Date();
+
+document.getElementById("clock").innerHTML =
+d.toLocaleDateString()
++"<br>"+
+d.toLocaleTimeString();
+
+
+}
+
+setInterval(clock,1000);
+clock();
+
+
+
+
+
+async function loadNews(){
+
+
+let url=
+"https://api.rss2json.com/v1/api.json?rss_url=https://feeds.bbci.co.uk/news/rss.xml";
+
+
+let response=await fetch(url);
+
+let data=await response.json();
+
+
+
+let html="";
+
+
+data.items.slice(0,15).forEach(item=>{
+
+
+let img="";
+
+if(item.enclosure){
+img=item.enclosure.link;
+}
+
+
+html +=`
+
+<div class="item">
+
+<img src="${img}">
+
+${item.title}
+
+</div>
+
+
+`;
+
+
+
+});
+
+
+document.getElementById("news").innerHTML=html;
+
+
+}
+
+
+loadNews();
+
+setInterval(loadNews,300000);
+
+
+</script>
+
 
 </body>
 </html>
