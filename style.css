@@ -1,0 +1,46 @@
+body{
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.ticker{
+    display:flex;
+    align-items:center;
+    height:60px;
+    background:#111;
+}
+
+.label{
+    background:#bb1919;
+    color:#fff;
+    font-size:28px;
+    font-weight:bold;
+    padding:0 20px;
+    height:60px;
+    line-height:60px;
+}
+
+.scroll{
+    flex:1;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+#news{
+    display:inline-block;
+    color:#fff;
+    font-size:26px;
+    padding-left:100%;
+    animation:scroll 25s linear infinite;
+}
+
+@keyframes scroll{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-100%);
+    }
+}
