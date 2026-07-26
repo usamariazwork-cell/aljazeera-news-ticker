@@ -1,1 +1,1 @@
-# bbc-news-ticker
+aljazeera-news-ticker
