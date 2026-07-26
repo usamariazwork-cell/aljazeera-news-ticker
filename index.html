@@ -164,9 +164,43 @@ async function loadNews(){
 
 try{
 
+let response = await fetch("news.json");
 
-let url =
-"https://api.allorigins.win/raw?url=https://feeds.bbci.co.uk/news/rss.xml";
+let data = await response.json();
+
+
+let output="";
+
+
+data.items.forEach(title=>{
+
+
+output += `
+
+<div class="item">
+
+${title}
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById("news").innerHTML = output;
+
+
+}
+
+catch(error){
+
+document.getElementById("news").innerHTML =
+"BBC News unavailable";
+
+}
+
+}
 
 
 let response = await fetch(url);
