@@ -55,7 +55,6 @@ jobs:
                 news.append(title.text.strip())
 
 
-
         with open("news.json", "w", encoding="utf-8") as file:
 
             json.dump(
