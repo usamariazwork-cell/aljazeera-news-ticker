@@ -29,7 +29,16 @@ jobs:
         url = "https://www.aljazeera.com/xml/rss/all.xml"
 
 
-        response = requests.get(url)
+        response = requests.get(
+            url,
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            }
+        )
+
+
+        response.raise_for_status()
+
 
         root = ET.fromstring(response.text)
 
@@ -41,16 +50,18 @@ jobs:
 
             title = item.find("title")
 
-            if title is not None:
+            if title is not None and title.text:
 
-                news.append(title.text)
+                news.append(title.text.strip())
 
 
 
         with open("news.json", "w", encoding="utf-8") as file:
 
             json.dump(
-                {"items": news},
+                {
+                    "items": news
+                },
                 file,
                 ensure_ascii=False,
                 indent=2
@@ -68,8 +79,11 @@ jobs:
 
         git config --global user.email "actions@github.com"
 
+
         git add news.json
 
+
         git commit -m "Update Al Jazeera headlines" || exit 0
+
 
         git push
