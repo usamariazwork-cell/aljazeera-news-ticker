@@ -102,7 +102,7 @@ html,body{
 
     overflow:hidden;
 
-    padding-left:30px;
+    padding:0 30px;
 
 }
 
@@ -121,23 +121,39 @@ html,body{
 
     text-align:center;
 
+    transform:translateX(120%);
+
     opacity:0;
-
-    transform:translateX(40px);
-
-    transition:
-
-    opacity 1.5s ease,
-
-    transform 1.5s ease;
 
 }
 
-.hide{
 
-    opacity:0 !important;
+.show{
 
-    transform:translate3d(-80px,0,0) !important;
+    animation:slideIn 1.8s ease forwards;
+
+}
+
+
+
+@keyframes slideIn{
+
+    from{
+
+        transform:translateX(120%);
+
+        opacity:0;
+
+    }
+
+
+    to{
+
+        transform:translateX(0);
+
+        opacity:1;
+
+    }
 
 }
 
@@ -220,9 +236,9 @@ setInterval(updateClock,1000);
 
 // NEWS
 
-let headlines = [];
+let headlines=[];
 
-let current = 0;
+let current=0;
 
 
 
@@ -230,12 +246,12 @@ async function loadNews(){
 
     try{
 
-        const response = await fetch("news.json?v=" + Date.now());
+        const response = await fetch("news.json?v="+Date.now());
 
 
         if(!response.ok){
 
-            throw new Error("news.json not found");
+            throw new Error("news.json missing");
 
         }
 
@@ -243,19 +259,17 @@ async function loadNews(){
         const data = await response.json();
 
 
-        headlines = data.items || [];
+        headlines=data.items || [];
 
 
-        if(headlines.length > 0){
+        current=0;
 
-            current = 0;
 
-            document.getElementById("headline").textContent = headlines[current];
-
-        }
+        showHeadline();
 
 
     }
+
 
     catch(error){
 
@@ -271,43 +285,48 @@ async function loadNews(){
 
 
 
-function showNextHeadline(){
+function showHeadline(){
 
-    if(headlines.length === 0){
+    if(headlines.length===0){
 
         return;
 
     }
 
 
-    const headline = document.getElementById("headline");
+    const headline=document.getElementById("headline");
 
 
-    headline.classList.add("hide");
+    headline.classList.remove("show");
+
+
+    void headline.offsetWidth;
+
+
+    headline.textContent=headlines[current];
+
+
+    headline.classList.add("show");
+
+
+}
 
 
 
-    setTimeout(function(){
+
+function nextHeadline(){
+
+    current++;
 
 
-        current++;
+    if(current>=headlines.length){
+
+        current=0;
+
+    }
 
 
-        if(current >= headlines.length){
-
-            current = 0;
-
-        }
-
-
-        headline.textContent = headlines[current];
-
-
-        headline.classList.remove("hide");
-
-
-    },700);
-
+    showHeadline();
 
 }
 
@@ -316,9 +335,9 @@ function showNextHeadline(){
 loadNews();
 
 
-// Change headline every 5 seconds
+// Change headline every 15 seconds
 
-setInterval(showNextHeadline,5000);
+setInterval(nextHeadline,15000);
 
 
 // Update news every 5 minutes
