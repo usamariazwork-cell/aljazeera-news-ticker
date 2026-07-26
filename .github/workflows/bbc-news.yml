@@ -1,0 +1,67 @@
+name: Update BBC News
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  update-news:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+
+    - name: Download BBC RSS and create news.json
+      run: |
+
+        python <<'PY'
+
+        import requests
+        import xml.etree.ElementTree as ET
+        import json
+
+        url = "https://feeds.bbci.co.uk/news/rss.xml"
+
+        response = requests.get(url)
+
+        root = ET.fromstring(response.text)
+
+        news = []
+
+        for item in root.findall(".//item")[:20]:
+
+            title = item.find("title")
+
+            if title is not None:
+                news.append(title.text)
+
+
+        with open("news.json", "w", encoding="utf-8") as file:
+
+            json.dump(
+                {"items": news},
+                file,
+                ensure_ascii=False,
+                indent=2
+            )
+
+        PY
+
+
+    - name: Commit updated news.json
+      run: |
+
+        git config --global user.name "github-actions"
+
+        git config --global user.email "actions@github.com"
+
+        git add news.json
+
+        git commit -m "Update BBC headlines" || exit 0
+
+        git push
