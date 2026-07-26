@@ -1,94 +1,134 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
-<title>BBC News Ticker</title>
+<title>BBC Live News Ticker</title>
 
 <style>
 
-body {
-    margin:0;
-    background:#000;
-    font-family:Arial, sans-serif;
-    overflow:hidden;
+body{
+margin:0;
+background:#000;
+font-family:Arial,Helvetica,sans-serif;
+overflow:hidden;
 }
 
 
 .container{
-    height:80px;
-    display:flex;
-    align-items:center;
-    background:#050505;
+
+height:90px;
+display:flex;
+align-items:center;
+background:#050505;
+
 }
 
+
+/* BBC LOGO */
 
 .logo{
-    width:120px;
-    height:80px;
-    background:#bb0000;
-    color:white;
-    font-size:42px;
-    font-weight:bold;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+
+width:120px;
+height:90px;
+background:#e00000;
+color:white;
+font-size:42px;
+font-weight:bold;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
 }
 
+
+/* TIME */
 
 .time{
-    color:white;
-    width:180px;
-    text-align:center;
-    font-size:18px;
+
+width:200px;
+color:white;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+line-height:28px;
+
 }
 
 
+/* TICKER AREA */
+
 .ticker{
-    flex:1;
-    overflow:hidden;
-    white-space:nowrap;
+
+flex:1;
+overflow:hidden;
+white-space:nowrap;
+
 }
 
 
 .news{
-    display:inline-flex;
-    align-items:center;
-    animation:scroll 90s linear infinite;
+
+display:inline-flex;
+align-items:center;
+
+animation:scroll 180s linear infinite;
+
 }
 
 
+
+/* HEADLINES */
+
 .item{
 
-    color:white;
-    font-size:28px;
-    margin-right:80px;
-    display:flex;
-    align-items:center;
+display:flex;
+align-items:center;
+
+color:white;
+
+font-size:28px;
+font-weight:500;
+
+margin-right:180px;
 
 }
 
 
 .item img{
 
-width:70px;
-height:45px;
+width:90px;
+height:55px;
+
 object-fit:cover;
-margin-right:15px;
+
+margin-right:20px;
+
+border-radius:5px;
 
 }
 
+
+
+/* SMOOTH MOVEMENT */
 
 @keyframes scroll{
 
-from{
+0%{
+
 transform:translateX(100%);
+
 }
 
-to{
+100%{
+
 transform:translateX(-100%);
+
 }
 
 }
+
 
 
 </style>
@@ -107,14 +147,22 @@ BBC
 </div>
 
 
-<div class="time" id="clock"></div>
+
+<div class="time" id="clock">
+
+</div>
+
 
 
 <div class="ticker">
 
+
 <div class="news" id="news">
+
 Loading BBC News...
+
 </div>
+
 
 </div>
 
@@ -126,58 +174,86 @@ Loading BBC News...
 <script>
 
 
-function clock(){
+// CLOCK
 
-let d=new Date();
+function updateClock(){
 
-document.getElementById("clock").innerHTML =
-d.toLocaleDateString()
-+"<br>"+
-d.toLocaleTimeString();
+let now=new Date();
+
+
+document.getElementById("clock").innerHTML=
+
+now.toLocaleDateString("en-GB")
++
+"<br>"
++
+now.toLocaleTimeString("en-GB");
 
 
 }
 
-setInterval(clock,1000);
-clock();
+
+setInterval(updateClock,1000);
+
+updateClock();
 
 
 
 
+// BBC RSS
 
 async function loadNews(){
 
 
+try{
+
+
 let url=
+
 "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.bbci.co.uk/news/rss.xml";
 
 
-let response=await fetch(url);
 
-let data=await response.json();
+let response=
 
-
-
-let html="";
+await fetch(url);
 
 
-data.items.slice(0,15).forEach(item=>{
+
+let data=
+
+await response.json();
 
 
-let img="";
 
-if(item.enclosure){
-img=item.enclosure.link;
+let output="";
+
+
+
+data.items.slice(0,20).forEach(news=>{
+
+
+let image="";
+
+
+if(news.enclosure){
+
+image=news.enclosure.link;
+
 }
 
 
-html +=`
+
+output += `
 
 <div class="item">
 
-<img src="${img}">
 
-${item.title}
+<img src="${image}">
+
+
+${news.title}
+
 
 </div>
 
@@ -189,15 +265,34 @@ ${item.title}
 });
 
 
-document.getElementById("news").innerHTML=html;
+
+document.getElementById("news").innerHTML=output;
+
+
+}
+
+catch(error){
+
+
+document.getElementById("news").innerHTML=
+
+"BBC News unavailable";
 
 
 }
 
 
+}
+
+
+
 loadNews();
 
+
+// Refresh every 5 minutes
+
 setInterval(loadNews,300000);
+
 
 
 </script>
