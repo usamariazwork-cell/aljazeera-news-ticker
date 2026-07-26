@@ -16,55 +16,46 @@ overflow:hidden;
 
 
 .container{
-
 height:90px;
 display:flex;
 align-items:center;
 background:#050505;
-
 }
 
 
 /* BBC LOGO */
 
 .logo{
-
 width:120px;
 height:90px;
 background:#e00000;
 color:white;
 font-size:42px;
 font-weight:bold;
-
 display:flex;
 align-items:center;
 justify-content:center;
-
 }
 
 
-/* TIME */
+/* CLOCK */
 
 .time{
-
 width:200px;
 color:white;
 font-size:18px;
 font-weight:bold;
 text-align:center;
-line-height:28px;
-
+line-height:25px;
 }
 
 
-/* TICKER AREA */
+/* NEWS AREA */
 
 .ticker{
-
 flex:1;
 overflow:hidden;
 white-space:nowrap;
-
 }
 
 
@@ -78,16 +69,9 @@ animation:scroll 180s linear infinite;
 }
 
 
-
-/* HEADLINES */
-
 .item{
 
-display:flex;
-align-items:center;
-
 color:white;
-
 font-size:28px;
 font-weight:500;
 
@@ -96,39 +80,20 @@ margin-right:180px;
 }
 
 
-.item img{
 
-width:90px;
-height:55px;
-
-object-fit:cover;
-
-margin-right:20px;
-
-border-radius:5px;
-
-}
-
-
-
-/* SMOOTH MOVEMENT */
+/* SMOOTH SCROLL */
 
 @keyframes scroll{
 
-0%{
-
+from{
 transform:translateX(100%);
-
 }
 
-100%{
-
+to{
 transform:translateX(-100%);
-
 }
 
 }
-
 
 
 </style>
@@ -149,20 +114,15 @@ BBC
 
 
 <div class="time" id="clock">
-
 </div>
 
 
 
 <div class="ticker">
 
-
 <div class="news" id="news">
-
 Loading BBC News...
-
 </div>
-
 
 </div>
 
@@ -180,9 +140,7 @@ function updateClock(){
 
 let now=new Date();
 
-
-document.getElementById("clock").innerHTML=
-
+document.getElementById("clock").innerHTML =
 now.toLocaleDateString("en-GB")
 +
 "<br>"
@@ -200,29 +158,35 @@ updateClock();
 
 
 
-// BBC RSS
+// BBC RSS NEWS
 
 async function loadNews(){
-
 
 try{
 
 
-let url=
-
+let url =
 "https://api.allorigins.win/raw?url=https://feeds.bbci.co.uk/news/rss.xml";
 
 
 
-let response=
-
-await fetch(url);
+let response = await fetch(url);
 
 
+let text = await response.text();
 
-let data=
 
-await response.json();
+
+let parser = new DOMParser();
+
+
+let xml =
+parser.parseFromString(text,"text/xml");
+
+
+
+let items =
+xml.querySelectorAll("item");
 
 
 
@@ -230,17 +194,14 @@ let output="";
 
 
 
-data.items.slice(0,20).forEach(news=>{
+items.forEach((item,index)=>{
 
 
-let image="";
+if(index < 20){
 
 
-if(news.enclosure){
-
-image=news.enclosure.link;
-
-}
+let title =
+item.querySelector("title").textContent;
 
 
 
@@ -248,25 +209,21 @@ output += `
 
 <div class="item">
 
-
-<img src="${image}">
-
-
-${news.title}
-
+${title}
 
 </div>
 
-
 `;
 
+}
 
 
 });
 
 
 
-document.getElementById("news").innerHTML=output;
+document.getElementById("news").innerHTML =
+output;
 
 
 }
@@ -274,8 +231,7 @@ document.getElementById("news").innerHTML=output;
 catch(error){
 
 
-document.getElementById("news").innerHTML=
-
+document.getElementById("news").innerHTML =
 "BBC News unavailable";
 
 
@@ -289,7 +245,7 @@ document.getElementById("news").innerHTML=
 loadNews();
 
 
-// Refresh every 5 minutes
+// Update every 5 minutes
 
 setInterval(loadNews,300000);
 
